@@ -1,0 +1,45 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+
+    function isUnder5MB() {
+      return request.resource.size < 5 * 1024 * 1024;
+    }
+
+    // Doctor profile photographs
+    match /doctors/{doctorId}/{fileName} {
+      allow read: if true;
+      allow write: if isAuthenticated() && isImage() && isUnder5MB();
+    }
+
+    // Patient payment receipts and IBFT transfer screenshots
+    match /paymentReceipts/{appointmentId}/{fileName} {
+      // Patients can upload receipts when booking from public website
+      allow create: if isImage() && isUnder5MB();
+      // Random unguessable file names: direct link works, folder listing is staff only
+      allow get: if true;
+      allow list: if isAuthenticated();
+      allow delete: if isAuthenticated();
+    }
+
+    // Website campaign banners and hero sliders
+    match /banners/{bannerId}/{fileName} {
+      allow read: if true;
+      allow write: if isAuthenticated() && isImage() && isUnder5MB();
+    }
+
+    // Hospital assets & logos
+    match /hospital/{fileName} {
+      allow read: if true;
+      allow write: if isAuthenticated() && isImage() && isUnder5MB();
+    }
+  }
+}

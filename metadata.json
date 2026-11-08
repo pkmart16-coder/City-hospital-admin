@@ -1,0 +1,6 @@
+{
+  "name": "City Hospital Admin Portal",
+  "description": "Comprehensive hospital management and administrative system with role-based access, appointments, doctor schedules, payment verification, payroll, and hospital settings.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
